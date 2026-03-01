@@ -183,11 +183,28 @@ static COodleApi &GetOodleApi()
 
 } // namespace
 
-UInt32 NormalizeLevel(UInt32 level)
+Int32 DecodeLevel(UInt32 level)
 {
-  if (level > k_Oodle_Level_Max)
+  if (level > Z7_ZSTD_FAST_LEV_INC && level <= Z7_ZSTD_FAST_LEV_INC + k_Oodle_FastLevel_Max)
+    return -(Int32)(level - Z7_ZSTD_FAST_LEV_INC);
+  return (Int32)level;
+}
+
+Int32 NormalizeLevel(Int32 level)
+{
+  if (level < k_Oodle_Level_Min)
+    level = k_Oodle_Level_Min;
+  else if (level > k_Oodle_Level_Max)
     level = k_Oodle_Level_Max;
   return level;
+}
+
+Byte EncodeLevel(Int32 level)
+{
+  level = NormalizeLevel(level);
+  if (level < 0)
+    return (Byte)(Z7_ZSTD_FAST_LEV_INC + (UInt32)(-level));
+  return (Byte)level;
 }
 
 HRESULT ReadAllInput(ISequentialInStream *inStream, const UInt64 *inSize, CByteBuffer &data, UInt64 &processedIn)
@@ -292,12 +309,14 @@ HRESULT OodleCompress(
   options.seekChunkReset = 1;
   options.seekChunkLen = (Int32)k_Oodle_SeekChunkLen;
 
+  const Int32 normalizedLevel = NormalizeLevel(DecodeLevel(level));
+
   const Int64 compLen = api.Compress(
       compressor,
       rawData.ConstData(),
       rawLen,
       compressedData.NonConstData(),
-      (Int32)NormalizeLevel(level),
+      normalizedLevel,
       &options,
       NULL,
       NULL,

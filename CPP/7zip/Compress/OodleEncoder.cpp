@@ -55,9 +55,14 @@ Z7_COM7F_IMF(CEncoderBase::SetCoderProperties(const PROPID *propIDs, const PROPV
     {
       case NCoderPropID::kLevel:
       {
-        if (prop.vt != VT_UI4)
+        Int32 level;
+        if (prop.vt == VT_UI4)
+          level = DecodeLevel((UInt32)prop.ulVal);
+        else if (prop.vt == VT_I4)
+          level = (Int32)prop.lVal;
+        else
           return E_INVALIDARG;
-        _props._level = (Byte)NormalizeLevel((UInt32)prop.ulVal);
+        _props._level = EncodeLevel(level);
         break;
       }
 

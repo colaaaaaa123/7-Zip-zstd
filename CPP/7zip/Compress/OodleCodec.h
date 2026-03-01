@@ -13,7 +13,9 @@ namespace NOODLE {
 const UInt32 k_Oodle_Version_Major = 9;
 const UInt32 k_Oodle_Version_Minor = 0;
 const UInt32 k_Oodle_Level_Default = 5;
-const UInt32 k_Oodle_Level_Max = 9;
+const Int32 k_Oodle_Level_Min = -4;
+const Int32 k_Oodle_Level_Max = 9;
+const UInt32 k_Oodle_FastLevel_Max = 4;
 const UInt32 k_Oodle_SeekChunkLen = 0x40000;
 
 const Int32 k_Oodle_Compressor_Kraken = 8;
@@ -38,7 +40,9 @@ struct CProps
   Byte _reserved[2];
 };
 
-UInt32 NormalizeLevel(UInt32 level);
+Int32 DecodeLevel(UInt32 level);
+Int32 NormalizeLevel(Int32 level);
+Byte EncodeLevel(Int32 level);
 
 HRESULT ReadAllInput(ISequentialInStream *inStream, const UInt64 *inSize, CByteBuffer &data, UInt64 &processedIn);
 

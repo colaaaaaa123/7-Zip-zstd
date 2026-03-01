@@ -469,10 +469,10 @@ static const signed char g_LevelRanges[][2] = {
   { 20, 29 }, // lizard m2
   { 30, 39 }, // lizard m3
   { 40, 49 }, // lizard m4
-  { 1, 9 }, // krak
-  { 1, 9 }, // mrmd
-  { 1, 9 }, // slke
-  { 1, 9 }, // levi
+  { -4, 9 }, // krak
+  { -4, 9 }, // mrmd
+  { -4, 9 }, // slke
+  { -4, 9 }, // levi
 };
 
 static bool IsMethodSupportedBySfx(int methodID)
@@ -1720,6 +1720,8 @@ void CCompressDialog::SetLevel2()
         LevelsMask = g_Formats[9].LevelsMask;
       else if (id == kLZ5)
         LevelsMask = g_Formats[10].LevelsMask;
+      else if (id >= kKRAK && id <= kLEVI)
+        LevelsMask = (1 << 1) | (1 << 3) | (1 << 5) | (1 << 7) | (1 << 9);
     }
   }
   UInt32 level = m_Level.GetCount() > 0 ? (UInt32)m_Level.GetItemData_of_CurSel() : (LevelsEnd - LevelsStart + 1) / 2;
@@ -1730,7 +1732,12 @@ void CCompressDialog::SetLevel2()
     {
       const NCompression::CFormatOptions &fo = m_RegistryInfo.Formats[index];
       if ( (fo.Level <= (UInt32)LevelsEnd) || (id != kCopy && fo.Level == Z7_ZSTD_ULTIMATE_LEV)
-        || (id == kZSTD && fo.Level > Z7_ZSTD_FAST_LEV_INC && fo.Level <= Z7_ZSTD_FAST_LEV_INC + 64)
+        || (id == kZSTD
+            && fo.Level > Z7_ZSTD_FAST_LEV_INC
+            && fo.Level <= Z7_ZSTD_FAST_LEV_INC + 64)
+        || (id >= kKRAK && id <= kLEVI
+            && fo.Level > Z7_ZSTD_FAST_LEV_INC
+            && fo.Level <= Z7_ZSTD_FAST_LEV_INC + 4)
       ) {
         level = (Int32)fo.Level;
       } else {
@@ -1762,16 +1769,24 @@ void CCompressDialog::SetLevel2()
     UString s = i >= 0 ? t : tf;
     ConvertInt64ToString(i, buf);
     s += buf;
-    if (ir < 0 && id == kZSTD) {
-      int lid = 0;
-      switch (-ir) {
-        case 64: lid = IDS_METHOD_ULTIMATEFAST; break;
-        case  7: lid = IDS_METHOD_ULTRAFAST;    break;
-        case  1: lid = IDS_METHOD_SUPERFAST;    break;
+    if (ir < 0) {
+      if (id == kZSTD) {
+        int lid = 0;
+        switch (-ir) {
+          case 64: lid = IDS_METHOD_ULTIMATEFAST; break;
+          case  7: lid = IDS_METHOD_ULTRAFAST;    break;
+          case  1: lid = IDS_METHOD_SUPERFAST;    break;
+        }
+        if (lid) {
+          s += L" (";
+          s += LangString(lid);
+          s += L")";
+        }
       }
-      if (lid) {
-        s += L" (";
-        s += LangString(lid);
+      else if (id >= kKRAK && id <= kLEVI) {
+        s += L" (HyperFast ";
+        ConvertInt64ToString(-ir, buf);
+        s += buf;
         s += L")";
       }
     }

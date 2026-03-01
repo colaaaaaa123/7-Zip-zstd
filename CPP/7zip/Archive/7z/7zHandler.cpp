@@ -576,7 +576,14 @@ HRESULT CHandler::ObtainBlockMethods(CNum folderIndex, PROPVARIANT *prop, CHandl
           dest += MyStringLen(dest);
           *dest++ = ',';
           *dest++ = 'l';
-          ConvertUInt32ToString(props[2], dest);
+          const UInt32 l = props[2];
+          if (l > Z7_ZSTD_FAST_LEV_INC && l <= Z7_ZSTD_FAST_LEV_INC + 4)
+          {
+            *dest++ = '-';
+            ConvertUInt32ToString(l - Z7_ZSTD_FAST_LEV_INC, dest);
+          }
+          else
+            ConvertUInt32ToString(l, dest);
           dest += MyStringLen(dest);
         }
         break;
@@ -594,7 +601,14 @@ HRESULT CHandler::ObtainBlockMethods(CNum folderIndex, PROPVARIANT *prop, CHandl
           dest += MyStringLen(dest);
           *dest++ = ',';
           *dest++ = 'l';
-          ConvertUInt32ToString(props[2], dest);
+          const UInt32 l = props[2];
+          if (l > Z7_ZSTD_FAST_LEV_INC && l <= Z7_ZSTD_FAST_LEV_INC + 4)
+          {
+            *dest++ = '-';
+            ConvertUInt32ToString(l - Z7_ZSTD_FAST_LEV_INC, dest);
+          }
+          else
+            ConvertUInt32ToString(l, dest);
           dest += MyStringLen(dest);
         }
         break;
@@ -612,7 +626,14 @@ HRESULT CHandler::ObtainBlockMethods(CNum folderIndex, PROPVARIANT *prop, CHandl
           dest += MyStringLen(dest);
           *dest++ = ',';
           *dest++ = 'l';
-          ConvertUInt32ToString(props[2], dest);
+          const UInt32 l = props[2];
+          if (l > Z7_ZSTD_FAST_LEV_INC && l <= Z7_ZSTD_FAST_LEV_INC + 4)
+          {
+            *dest++ = '-';
+            ConvertUInt32ToString(l - Z7_ZSTD_FAST_LEV_INC, dest);
+          }
+          else
+            ConvertUInt32ToString(l, dest);
           dest += MyStringLen(dest);
         }
         break;
@@ -630,7 +651,14 @@ HRESULT CHandler::ObtainBlockMethods(CNum folderIndex, PROPVARIANT *prop, CHandl
           dest += MyStringLen(dest);
           *dest++ = ',';
           *dest++ = 'l';
-          ConvertUInt32ToString(props[2], dest);
+          const UInt32 l = props[2];
+          if (l > Z7_ZSTD_FAST_LEV_INC && l <= Z7_ZSTD_FAST_LEV_INC + 4)
+          {
+            *dest++ = '-';
+            ConvertUInt32ToString(l - Z7_ZSTD_FAST_LEV_INC, dest);
+          }
+          else
+            ConvertUInt32ToString(l, dest);
           dest += MyStringLen(dest);
         }
         break;
