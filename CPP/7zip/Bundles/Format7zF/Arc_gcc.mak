@@ -413,13 +413,20 @@ COMPRESS_OBJS += \
   $O/Lz5Decoder.o \
   $O/Lz5Encoder.o \
   $O/Lz5Register.o \
+  $O/ZstdEncoder.o \
+  $O/ZstdRegister.o \
+  $O/FastLzma2Register.o \
+
+ifdef IS_MINGW
+ifdef IS_X64
+COMPRESS_OBJS += \
   $O/OodleCodec.o \
   $O/OodleDecoder.o \
   $O/OodleEncoder.o \
   $O/OodleRegister.o \
-  $O/ZstdEncoder.o \
-  $O/ZstdRegister.o \
-  $O/FastLzma2Register.o \
+
+endif
+endif
 
 ARC_OBJS = \
   $(LZMA_DEC_OPT_OBJS) \

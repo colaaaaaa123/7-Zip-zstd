@@ -345,13 +345,18 @@ COMPRESS_OBJS = \
   $O\Lz5Decoder.obj \
   $O\Lz5Encoder.obj \
   $O\Lz5Register.obj \
+  $O\ZstdEncoder.obj \
+  $O\ZstdRegister.obj \
+  $O\FastLzma2Register.obj \
+
+!IF "$(PLATFORM)" == "x64"
+COMPRESS_OBJS = \
+  $(COMPRESS_OBJS) \
   $O\OodleCodec.obj \
   $O\OodleDecoder.obj \
   $O\OodleEncoder.obj \
   $O\OodleRegister.obj \
-  $O\ZstdEncoder.obj \
-  $O\ZstdRegister.obj \
-  $O\FastLzma2Register.obj \
+!ENDIF
 
 BROTLI_OBJS = \
   $O/br_backward_references.obj \
