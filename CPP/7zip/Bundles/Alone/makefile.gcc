@@ -360,6 +360,10 @@ COMPRESS_OBJS += \
   $O/Lz4Decoder.o \
   $O/Lz4Encoder.o \
   $O/Lz4Register.o \
+  $O/OodleCodec.o \
+  $O/OodleDecoder.o \
+  $O/OodleEncoder.o \
+  $O/OodleRegister.o \
   $O/ZstdEncoder.o \
   $O/ZstdRegister.o \
   $O/FastLzma2Register.o \

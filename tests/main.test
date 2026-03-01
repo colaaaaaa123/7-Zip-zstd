@@ -21,6 +21,10 @@ test main--formats {7z version, formats} {
 		{\n\s*0\s+ED\s+4F71102 BROTLI\s} \
 		{\n\s*0\s+ED\s+4F71104 LZ4\s} \
 		{\n\s*0\s+ED\s+4F71106 LIZARD\s} \
+		{\n\s*0\s+ED\s+4F71107 KRAK\s} \
+		{\n\s*0\s+ED\s+4F71108 MRMD\s} \
+		{\n\s*0\s+ED\s+4F71109 SLKE\s} \
+		{\n\s*0\s+ED\s+4F7110A LEVI\s} \
 		{\n\s*0\s+ED\s+4F71105 LZ5\s} \
 		{\n\s*0\s+ED\s+4F71101 ZSTD\s} \
 		{\n\s*0\s+ED\s+21 FLZMA2\s}
@@ -50,6 +54,15 @@ testConstraint lckd_test_file [expr {
 	[info exists ::env(LOCALAPPDATA)] &&
 	[file exists [set lckd_test_file [file join $::env(LOCALAPPDATA) {Microsoft\Windows\Notifications\wpndatabase.db-wal}]]]
 }]
+
+# oo2core_9_win64.dll must exist in the same directory as tested 7z.exe
+set oodle9_dll {}
+testConstraint oodle9_dll [expr {
+	[testConstraint winOnly] &&
+	[info exists Z7_PATH] &&
+	[file exists [set oodle9_dll [file join [file dirname $Z7_PATH] oo2core_9_win64.dll]]]
+}]
+
 foreach t {{-t7z -m0=zstd:x1} {-tzstd -mx1}} {
 test main--compress[lindex $t 0]-lckd-no-ssw {error, compress file open for writing without -ssw option} -constraints lckd_test_file -body {
 	variable lckd_test_file
@@ -75,6 +88,40 @@ test main--pipe-a-to-e {7z simple compression / decompression via std-pipes} {
 	}
 	set _ OK
 } OK
+
+test main--pipe-a-to-e-oodle {7z oodle compression / decompression via 7z std-pipes} -constraints oodle9_dll {
+	variable Z7_PATH
+	foreach m {KRAK MRMD SLKE LEVI} {
+		if {[catch {
+			7z a -t7z -m0=$m:x3 -si -so << "$m: This is a test string passed to stdin" . | $Z7_PATH e -t7z -si -so
+		} res]} {
+			error "Test of -m0=$m failed: $res"
+		}
+		assertLogged "^$m: This is a test string passed to stdin$"
+	}
+	set _ OK
+} OK
+
+test main--oodle-level-from-mx {7z oodle level is taken from -mxN} -constraints oodle9_dll -setup {
+	set tmpdir [file join [temporaryDirectory] 7z-test-oodle-level-[format %x-%lx [pid] [clock microseconds]]]
+	file mkdir $tmpdir
+	set inpath [file join $tmpdir oodle-level.txt]
+	set f [open $inpath wb]
+	puts -nonewline $f "oodle level probe text"
+	close $f
+} -body {
+	foreach {m lvl} {KRAK 7 MRMD 4 SLKE 5 LEVI 6} {
+		set arcpath [file join $tmpdir oodle-level-$m.7z]
+		7z a -t7z -m0=$m -mx$lvl -- $arcpath $inpath
+		set slt [7z l -slt -- $arcpath]
+		if {![regexp "Method\\s*=\\s*$m:[^\\n]*l$lvl" $slt]} {
+			error "Expected level l$lvl for $m, got:\n$slt"
+		}
+	}
+	set _ OK
+} -cleanup {
+	file delete -force $tmpdir
+} -result OK
 
 test main--mmt-option {7z force multi-threaded & single-threaded compression / decompression} {
 	variable Z7_PATH

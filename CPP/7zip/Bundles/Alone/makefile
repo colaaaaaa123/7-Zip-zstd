@@ -321,6 +321,10 @@ COMPRESS_OBJS = \
   $O\Lz4Decoder.obj \
   $O\Lz4Encoder.obj \
   $O\Lz4Register.obj \
+  $O\OodleCodec.obj \
+  $O\OodleDecoder.obj \
+  $O\OodleEncoder.obj \
+  $O\OodleRegister.obj \
   $O\ZstdEncoder.obj \
   $O\ZstdRegister.obj \
   $O\FastLzma2Register.obj \

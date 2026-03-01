@@ -562,6 +562,78 @@ HRESULT CHandler::ObtainBlockMethods(CNum folderIndex, PROPVARIANT *prop, CHandl
           dest += MyStringLen(dest);
         }
         break;
+      case k_KRAK:
+        name = "KRAK";
+        if (propsSize == 3 || propsSize == 5)
+        {
+          if (info) {lev = props[2]; goto obtainInfo;}
+          char *dest = s;
+          *dest++ = 'v';
+          ConvertUInt32ToString(props[0], dest);
+          dest += MyStringLen(dest);
+          *dest++ = '.';
+          ConvertUInt32ToString(props[1], dest);
+          dest += MyStringLen(dest);
+          *dest++ = ',';
+          *dest++ = 'l';
+          ConvertUInt32ToString(props[2], dest);
+          dest += MyStringLen(dest);
+        }
+        break;
+      case k_MRMD:
+        name = "MRMD";
+        if (propsSize == 3 || propsSize == 5)
+        {
+          if (info) {lev = props[2]; goto obtainInfo;}
+          char *dest = s;
+          *dest++ = 'v';
+          ConvertUInt32ToString(props[0], dest);
+          dest += MyStringLen(dest);
+          *dest++ = '.';
+          ConvertUInt32ToString(props[1], dest);
+          dest += MyStringLen(dest);
+          *dest++ = ',';
+          *dest++ = 'l';
+          ConvertUInt32ToString(props[2], dest);
+          dest += MyStringLen(dest);
+        }
+        break;
+      case k_SLKE:
+        name = "SLKE";
+        if (propsSize == 3 || propsSize == 5)
+        {
+          if (info) {lev = props[2]; goto obtainInfo;}
+          char *dest = s;
+          *dest++ = 'v';
+          ConvertUInt32ToString(props[0], dest);
+          dest += MyStringLen(dest);
+          *dest++ = '.';
+          ConvertUInt32ToString(props[1], dest);
+          dest += MyStringLen(dest);
+          *dest++ = ',';
+          *dest++ = 'l';
+          ConvertUInt32ToString(props[2], dest);
+          dest += MyStringLen(dest);
+        }
+        break;
+      case k_LEVI:
+        name = "LEVI";
+        if (propsSize == 3 || propsSize == 5)
+        {
+          if (info) {lev = props[2]; goto obtainInfo;}
+          char *dest = s;
+          *dest++ = 'v';
+          ConvertUInt32ToString(props[0], dest);
+          dest += MyStringLen(dest);
+          *dest++ = '.';
+          ConvertUInt32ToString(props[1], dest);
+          dest += MyStringLen(dest);
+          *dest++ = ',';
+          *dest++ = 'l';
+          ConvertUInt32ToString(props[2], dest);
+          dest += MyStringLen(dest);
+        }
+        break;
       case k_LZ4:
         name = "LZ4";
         if (propsSize == 3 || propsSize == 5)

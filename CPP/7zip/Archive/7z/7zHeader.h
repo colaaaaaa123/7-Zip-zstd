@@ -128,6 +128,10 @@ const UInt32 k_BROTLI= 0x4F71102;
 const UInt32 k_LZ4   = 0x4F71104;
 const UInt32 k_LZ5   = 0x4F71105;
 const UInt32 k_LIZARD= 0x4F71106;
+const UInt32 k_KRAK  = 0x4F71107;
+const UInt32 k_MRMD  = 0x4F71108;
+const UInt32 k_SLKE  = 0x4F71109;
+const UInt32 k_LEVI  = 0x4F7110A;
 
 const UInt32 k_AES   = 0x6F10701;
 
