@@ -138,6 +138,10 @@ enum EMethodID
   kLIZARD_M2,
   kLIZARD_M3,
   kLIZARD_M4,
+  kKRAK,
+  kMRMD,
+  kSLKE,
+  kLEVI,
   kSha256,
   kSha1,
   kCrc32,
@@ -165,6 +169,10 @@ static LPCSTR const kMethodsNames[] =
   , "Lizard"
   , "Lizard"
   , "Lizard"
+  , "KRAK"
+  , "MRMD"
+  , "SLKE"
+  , "LEVI"
   , "SHA256"
   , "SHA1"
   , "CRC32"
@@ -192,6 +200,10 @@ static LPCSTR const kMethodsNamesLong[] =
   , "Lizard, LIZv1"
   , "Lizard, FastLZ4 + Huffman"
   , "Lizard, LIZv1 + Huffman"
+  , "Oodle Kraken"
+  , "Oodle Mermaid"
+  , "Oodle Selkie"
+  , "Oodle Leviathan"
   , "SHA256"
   , "SHA1"
   , "CRC32"
@@ -244,6 +256,10 @@ static const EMethodID g_7zMethods[] =
   , kLIZARD_M2
   , kLIZARD_M3
   , kLIZARD_M4
+  , kKRAK
+  , kMRMD
+  , kSLKE
+  , kLEVI
   , kFLZMA2
   , kCopy
 };
@@ -453,6 +469,10 @@ static const signed char g_LevelRanges[][2] = {
   { 20, 29 }, // lizard m2
   { 30, 39 }, // lizard m3
   { 40, 49 }, // lizard m4
+  { 1, 9 }, // krak
+  { 1, 9 }, // mrmd
+  { 1, 9 }, // slke
+  { 1, 9 }, // levi
 };
 
 static bool IsMethodSupportedBySfx(int methodID)
@@ -1685,7 +1705,7 @@ void CCompressDialog::SetLevel2()
       LevelsEnd = 0;
       LevelsEndByMask = false;
       LevelsMask = 0;
-    } else if (id >= kZSTD && id <= kLIZARD_M4) {
+    } else if (id >= kZSTD && id <= kLEVI) {
       auto& r = g_LevelRanges[id - kZSTD];
       LevelsStart = r[0];
       LevelsEnd = r[1];
@@ -2874,6 +2894,10 @@ void CCompressDialog::SetNumThreads2()
     case kLIZARD_M2: numAlgoThreadsMax = 128; break;
     case kLIZARD_M3: numAlgoThreadsMax = 128; break;
     case kLIZARD_M4: numAlgoThreadsMax = 128; break;
+    case kKRAK: numAlgoThreadsMax = 1; break;
+    case kMRMD: numAlgoThreadsMax = 1; break;
+    case kSLKE: numAlgoThreadsMax = 1; break;
+    case kLEVI: numAlgoThreadsMax = 1; break;
     case kFLZMA2: numAlgoThreadsMax = 128; break;
     case kLZMA: numAlgoThreadsMax = 2; break;
     case kLZMA2: numAlgoThreadsMax = 256; break;
