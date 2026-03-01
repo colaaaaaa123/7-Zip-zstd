@@ -55,14 +55,11 @@ goto :eof
 REM Currently we build 3 architectures as 6 targets with and without darkmode (ndm suffix)
 :start
 
-call :doit x86       ""                            "%WD%\bin-x86"
-call :doit x86-ndm   ""                            "%WD%\bin-x86-ndm"
-
-call :doit x64       "%WD%\bin-x86\7-zip.dll"      "%WD%\bin-x64"
-call :doit x64-ndm   "%WD%\bin-x86-ndm\7-zip.dll"  "%WD%\bin-x64-ndm"
-
-call :doit arm64     "%WD%\bin-arm\7-zip.dll"      "%WD%\bin-arm64"
-call :doit arm64-ndm "%WD%\bin-arm-ndm\7-zip.dll"  "%WD%\bin-arm64-ndm"
+if not exist "%WD%\bin-x64\Install.exe" (
+  echo ERROR: expected x64 binaries at "%WD%\bin-x64"
+  exit /b 1
+)
+call :doit x64 "" "%WD%\bin-x64"
 
 REM cleanup
 cd %WD%
