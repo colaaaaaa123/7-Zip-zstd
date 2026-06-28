@@ -1487,8 +1487,10 @@ bool CCompressDialog::OnCommand(unsigned code, unsigned itemID, LPARAM lParam)
       {
         Get_FormatOptions().ResetForLevelChange();
 
-        //SetMethod();
-        MethodChanged();
+        if (GetLevel() == 0 || m_Method.GetCount() <= 0)
+          SetMethod();
+        else
+          MethodChanged();
         SetSolidBlockSize();
         SetNumThreads();
         CheckSFXNameChange();
