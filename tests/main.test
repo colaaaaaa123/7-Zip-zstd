@@ -90,18 +90,35 @@ test main--pipe-a-to-e {7z simple compression / decompression via std-pipes} {
 	set _ OK
 } OK
 
-test main--pipe-a-to-e-oodle {7z oodle compression / decompression via 7z std-pipes} -constraints oodle9_dll {
+test main--a-t-e-oodle {7z oodle compression / decompression} -constraints oodle9_dll -setup {
+	set tmpdir [file join [temporaryDirectory] 7z-test-oodle-[format %x-%lx [pid] [clock microseconds]]]
+	file mkdir $tmpdir
+} -body {
 	variable Z7_PATH
 	foreach m {KRAK MRMD SLKE LEVI} {
+		set v "$m: This is a test string passed to an input file"
+		set inpath [file join $tmpdir input-$m.txt]
+		set arcpath [file join $tmpdir $m.7z]
+		set f [open $inpath wb]
+		puts -nonewline $f $v
+		close $f
 		if {[catch {
-			7z a -t7z -m0=$m:x3 -si -so << "$m: This is a test string passed to stdin" . | $Z7_PATH e -t7z -si -so
+			7z a -t7z -m0=$m:x3 -- $arcpath $inpath
+			assertLogged {\nEverything is Ok}
+			7z t -- $arcpath
+			assertLogged {\nEverything is Ok}
+			set v2 [7z e -so -- $arcpath]
 		} res]} {
 			error "Test of -m0=$m failed: $res"
 		}
-		assertLogged "^$m: This is a test string passed to stdin$"
+		if {$v2 ne $v} {
+			error "retrieved $v2 instead of original"
+		}
 	}
 	set _ OK
-} OK
+} -cleanup {
+	file delete -force $tmpdir
+} -result OK
 
 test main--mmt-option {7z force multi-threaded & single-threaded compression / decompression} {
 	variable Z7_PATH
