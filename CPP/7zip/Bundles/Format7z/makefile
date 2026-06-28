@@ -164,6 +164,13 @@ COMPRESS_OBJS = $(COMPRESS_OBJS) \
   $O\ZstdRegister.obj \
   $O\FastLzma2Register.obj \
 
+!IF "$(PLATFORM)" == "x64"
+COMPRESS_OBJS = \
+  $(COMPRESS_OBJS) \
+  $O\OodleCodec.obj \
+
+!ENDIF
+
 BROTLI_OBJS = \
   $O/br_backward_references.obj \
   $O/br_backward_references_hq.obj \

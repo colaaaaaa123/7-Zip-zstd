@@ -176,6 +176,27 @@ static char *AddProp32(char *s, const char *name, UInt32 v)
   s = MyStpCpy(s, name);
   return ConvertUInt32ToString(v, s);
 }
+
+static void GetOodleString(char *s, const Byte *props)
+{
+  char *dest = s;
+  *dest++ = 'v';
+  ConvertUInt32ToString(props[0], dest);
+  dest += MyStringLen(dest);
+  *dest++ = '.';
+  ConvertUInt32ToString(props[1], dest);
+  dest += MyStringLen(dest);
+  *dest++ = ',';
+  *dest++ = 'l';
+  const UInt32 level = props[2];
+  if (level > Z7_ZSTD_FAST_LEV_INC && level <= Z7_ZSTD_FAST_LEV_INC + 4)
+  {
+    *dest++ = '-';
+    ConvertUInt32ToString(level - Z7_ZSTD_FAST_LEV_INC, dest);
+  }
+  else
+    ConvertUInt32ToString(level, dest);
+}
  
 void CHandler::AddMethodName(AString &s, UInt64 id)
 {
@@ -560,6 +581,38 @@ HRESULT CHandler::ObtainBlockMethods(CNum folderIndex, PROPVARIANT *prop, CHandl
           *dest++ = 'l';
           ConvertUInt32ToString(props[2], dest);
           dest += MyStringLen(dest);
+        }
+        break;
+      case k_KRAK:
+        name = "KRAK";
+        if (propsSize == 3 || propsSize == 5)
+        {
+          if (info) {lev = props[2]; goto obtainInfo;}
+          GetOodleString(s, props);
+        }
+        break;
+      case k_MRMD:
+        name = "MRMD";
+        if (propsSize == 3 || propsSize == 5)
+        {
+          if (info) {lev = props[2]; goto obtainInfo;}
+          GetOodleString(s, props);
+        }
+        break;
+      case k_SLKE:
+        name = "SLKE";
+        if (propsSize == 3 || propsSize == 5)
+        {
+          if (info) {lev = props[2]; goto obtainInfo;}
+          GetOodleString(s, props);
+        }
+        break;
+      case k_LEVI:
+        name = "LEVI";
+        if (propsSize == 3 || propsSize == 5)
+        {
+          if (info) {lev = props[2]; goto obtainInfo;}
+          GetOodleString(s, props);
         }
         break;
       case k_LZ4:

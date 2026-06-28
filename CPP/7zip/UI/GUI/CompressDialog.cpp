@@ -119,6 +119,13 @@ static const UInt32 g_Levels[] =
   IDS_METHOD_ULTRA
 };
 
+#if defined(_WIN64)
+#define Z7_GUI_OODLE
+#define Z7_GUI_ZSTD_RANGE_LAST kLEVI
+#else
+#define Z7_GUI_ZSTD_RANGE_LAST kLIZARD_M4
+#endif
+
 enum EMethodID
 {
   kCopy,
@@ -138,6 +145,12 @@ enum EMethodID
   kLIZARD_M2,
   kLIZARD_M3,
   kLIZARD_M4,
+#ifdef Z7_GUI_OODLE
+  kKRAK,
+  kMRMD,
+  kSLKE,
+  kLEVI,
+#endif
   kSha256,
   kSha1,
   kCrc32,
@@ -165,6 +178,12 @@ static LPCSTR const kMethodsNames[] =
   , "Lizard"
   , "Lizard"
   , "Lizard"
+#ifdef Z7_GUI_OODLE
+  , "KRAK"
+  , "MRMD"
+  , "SLKE"
+  , "LEVI"
+#endif
   , "SHA256"
   , "SHA1"
   , "CRC32"
@@ -192,6 +211,12 @@ static LPCSTR const kMethodsNamesLong[] =
   , "Lizard, LIZv1"
   , "Lizard, FastLZ4 + Huffman"
   , "Lizard, LIZv1 + Huffman"
+#ifdef Z7_GUI_OODLE
+  , "Oodle Kraken"
+  , "Oodle Mermaid"
+  , "Oodle Selkie"
+  , "Oodle Leviathan"
+#endif
   , "SHA256"
   , "SHA1"
   , "CRC32"
@@ -244,6 +269,12 @@ static const EMethodID g_7zMethods[] =
   , kLIZARD_M2
   , kLIZARD_M3
   , kLIZARD_M4
+#ifdef Z7_GUI_OODLE
+  , kKRAK
+  , kMRMD
+  , kSLKE
+  , kLEVI
+#endif
   , kFLZMA2
   , kCopy
 };
@@ -453,6 +484,12 @@ static const signed char g_LevelRanges[][2] = {
   { 20, 29 }, // lizard m2
   { 30, 39 }, // lizard m3
   { 40, 49 }, // lizard m4
+#ifdef Z7_GUI_OODLE
+  { -4, 9 }, // krak
+  { -4, 9 }, // mrmd
+  { -4, 9 }, // slke
+  { -4, 9 }, // levi
+#endif
 };
 
 static bool IsMethodSupportedBySfx(int methodID)
@@ -1691,7 +1728,7 @@ void CCompressDialog::SetLevel2()
       LevelsEnd = 0;
       LevelsEndByMask = false;
       LevelsMask = 0;
-    } else if (id >= kZSTD && id <= kLIZARD_M4) {
+    } else if (id >= kZSTD && id <= Z7_GUI_ZSTD_RANGE_LAST) {
       auto& r = g_LevelRanges[id - kZSTD];
       LevelsStart = r[0];
       LevelsEnd = r[1];
@@ -1706,6 +1743,10 @@ void CCompressDialog::SetLevel2()
         LevelsMask = g_Formats[9].LevelsMask;
       else if (id == kLZ5)
         LevelsMask = g_Formats[10].LevelsMask;
+#ifdef Z7_GUI_OODLE
+      else if (id >= kKRAK && id <= kLEVI)
+        LevelsMask = (1 << 1) | (1 << 3) | (1 << 5) | (1 << 7) | (1 << 9);
+#endif
     }
   }
   UInt32 level = m_Level.GetCount() > 0 ? (UInt32)m_Level.GetItemData_of_CurSel() : (LevelsEnd - LevelsStart + 1) / 2;
@@ -1717,6 +1758,11 @@ void CCompressDialog::SetLevel2()
       const NCompression::CFormatOptions &fo = m_RegistryInfo.Formats[index];
       if ( (fo.Level <= (UInt32)LevelsEnd) || (id != kCopy && fo.Level == Z7_ZSTD_ULTIMATE_LEV)
         || (id == kZSTD && fo.Level > Z7_ZSTD_FAST_LEV_INC && fo.Level <= Z7_ZSTD_FAST_LEV_INC + 64)
+#ifdef Z7_GUI_OODLE
+        || (id >= kKRAK && id <= kLEVI
+            && fo.Level > Z7_ZSTD_FAST_LEV_INC
+            && fo.Level <= Z7_ZSTD_FAST_LEV_INC + 4)
+#endif
       ) {
         level = (Int32)fo.Level;
       } else {
@@ -1761,6 +1807,15 @@ void CCompressDialog::SetLevel2()
         s += L")";
       }
     }
+#ifdef Z7_GUI_OODLE
+    else if (ir < 0 && id >= kKRAK && id <= kLEVI)
+    {
+      s += L" (HyperFast ";
+      ConvertInt64ToString(-ir, buf);
+      s += buf;
+      s += L")";
+    }
+#endif
     else
     if (ir >= 0 && (LevelsMask & (1 << ir)) && j < Z7_ARRAY_SIZE(g_Levels))
     {
@@ -2879,6 +2934,12 @@ void CCompressDialog::SetNumThreads2()
     case kLIZARD_M2: numAlgoThreadsMax = 128; break;
     case kLIZARD_M3: numAlgoThreadsMax = 128; break;
     case kLIZARD_M4: numAlgoThreadsMax = 128; break;
+#ifdef Z7_GUI_OODLE
+    case kKRAK: numAlgoThreadsMax = 1; break;
+    case kMRMD: numAlgoThreadsMax = 1; break;
+    case kSLKE: numAlgoThreadsMax = 1; break;
+    case kLEVI: numAlgoThreadsMax = 1; break;
+#endif
     case kFLZMA2: numAlgoThreadsMax = 128; break;
     case kLZMA: numAlgoThreadsMax = 2; break;
     case kLZMA2: numAlgoThreadsMax = 256 * 2; break; // MTCODER_THREADS_MAX * 2

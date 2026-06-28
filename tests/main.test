@@ -15,7 +15,7 @@ test main--usage {7z version, usage} {
 } OK
 
 test main--formats {7z version, formats} {
-	7z i
+	set info [7z i]
 	assertLogged {^\s*7-Zip \d+.\d+ ZS} {\szstd\s+zst zstd tzst} {\sbrotli\s+br brotli tbr}
 	assertLogged \
 		{\n\s*0\s+ED\s+4F71102 BROTLI\s} \
@@ -24,6 +24,13 @@ test main--formats {7z version, formats} {
 		{\n\s*0\s+ED\s+4F71105 LZ5\s} \
 		{\n\s*0\s+ED\s+4F71101 ZSTD\s} \
 		{\n\s*0\s+ED\s+21 FLZMA2\s}
+	if {[regexp {\n\s*0\s+ED\s+4F71107 KRAK\s} $info]} {
+		assertLogged \
+			{\n\s*0\s+ED\s+4F71107 KRAK\s} \
+			{\n\s*0\s+ED\s+4F71108 MRMD\s} \
+			{\n\s*0\s+ED\s+4F71109 SLKE\s} \
+			{\n\s*0\s+ED\s+4F7110A LEVI\s}
+	}
 
 	set _ OK
 } OK
@@ -63,6 +70,13 @@ test main--compress[lindex $t 0]-lckd-w-ssw {no error, compress file open for wr
 } -returnCodes ok -match glob -result "*Everything is Ok*"
 }
 
+set oodle9_dll {}
+testConstraint oodle9_dll [expr {
+	[testConstraint winOnly] &&
+	[info exists Z7_PATH] &&
+	[file exists [set oodle9_dll [file join [file dirname $Z7_PATH] oo2core_9_win64.dll]]]
+}]
+
 test main--pipe-a-to-e {7z simple compression / decompression via std-pipes} {
 	variable Z7_PATH
 	foreach t {zstd brotli bzip2 xz gzip lz4 lz5} {
@@ -72,6 +86,19 @@ test main--pipe-a-to-e {7z simple compression / decompression via std-pipes} {
 			error "Test of -t$t failed: $res"
 		}
 		assertLogged "^$t: This is a test string passed to stdin$"
+	}
+	set _ OK
+} OK
+
+test main--pipe-a-to-e-oodle {7z oodle compression / decompression via 7z std-pipes} -constraints oodle9_dll {
+	variable Z7_PATH
+	foreach m {KRAK MRMD SLKE LEVI} {
+		if {[catch {
+			7z a -t7z -m0=$m:x3 -si -so << "$m: This is a test string passed to stdin" . | $Z7_PATH e -t7z -si -so
+		} res]} {
+			error "Test of -m0=$m failed: $res"
+		}
+		assertLogged "^$m: This is a test string passed to stdin$"
 	}
 	set _ OK
 } OK

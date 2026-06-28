@@ -325,6 +325,13 @@ COMPRESS_OBJS = \
   $O\ZstdRegister.obj \
   $O\FastLzma2Register.obj \
 
+!IF "$(PLATFORM)" == "x64"
+COMPRESS_OBJS = \
+  $(COMPRESS_OBJS) \
+  $O\OodleCodec.obj \
+
+!ENDIF
+
 !include "../../UI/Console/Console.mak"
 
 !include "../../Aes.mak"
