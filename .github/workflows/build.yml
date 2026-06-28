@@ -1,6 +1,10 @@
 
 name: Build binaries
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - actions/oodle-build-test-20260629-004650
+  workflow_dispatch:
 
 jobs:
 
